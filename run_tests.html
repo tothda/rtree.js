@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>rtree.js Test Runner</title>
+    <script src="vendor/jspec/jspec.js" type="text/javascript" charset="utf-8"></script>
+    <script src="vendor/prototype/prototype.js" type="text/javascript" charset="utf-8"></script>
+    <script src="rtree.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="vendor/jspec/jspec.css" type="text/css" media="screen" charset="utf-8">
+    <script type="text/javascript" charset="utf-8">
+      function runSuites() {
+        JSpec
+          .exec('spec/spec.rtree.js')
+          //.run({ failuresOnly : true })
+          //.run({ formatter : JSpec.formatters.Console })
+          .run()
+          .report()
+      } 
+    </script>    
+  </head>
+  <body id="run_tests" onload="runSuites()">
+    <div id="jspec"></div>
+  </body>
+</html>
