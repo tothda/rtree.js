@@ -125,8 +125,8 @@ Rectangle.mbr = function() {
 var Entry = Class.create({
   node: null,
 
-  initialize: function(object, rect) {
-    this.object = object;
+  initialize: function(obj, rect) {
+    this.obj = obj;
     this.rect = rect;
   },
 
@@ -134,7 +134,8 @@ var Entry = Class.create({
     this.node = node;
   },
   setRect: function(rect) { this.rect = rect; },
-  getRect: function(rect) { return this.rect; }
+  getRect: function() { return this.rect; },
+  getObj: function() {return this.obj}
 });
 
 /**
@@ -191,8 +192,8 @@ var Node = Class.create({
       candidate: null
     };
     var result = this.entries.inject(accumlator, function(acc, entry) {
-      var areaEntry = entry.rect.area();
-      var mbr = Rectangle.mbr(entry.rect, rect);
+      var areaEntry = entry.getRect().area();
+      var mbr = Rectangle.mbr(entry.getRect(), rect);
       var areaMbr = mbr.area();
       var enlargement = areaMbr - areaEntry;
       if (enlargement < acc.enlargement) {
@@ -201,7 +202,7 @@ var Node = Class.create({
       }
       return acc;
     });
-    return result.candidate.object;
+    return result.candidate.getObj();
   }
 });
 
@@ -255,12 +256,26 @@ var RTree = Class.create({
    *  Given a search rectangle, it returns the Array of object ids,
    *  whose bounding rectangle overlaps the search bounding rectangle
    **/
-  search:function(rect) {},
+  search:function(rect) {
+    return this.searchTree(this._root, rect).map(function(e) {
+      return e.getObj();
+    });
+  },
+
+  searchTree:function(root, queryRect) {
+    var matches = root.getEntries().filter(function(entry) {
+      return Rectangle.intersect(queryRect, entry.getRect());
+    });
+    if (root.isLeaf()) return matches;
+    return matches.map(function(m) {
+      return this.searchTree(m.getObj(), queryRect);
+    }, this).flatten();
+  },
 
   _chooseLeaf: function(entry) {
     var n = this._root;
     while (n.isBranch()) {
-      n = n.chooseSubtree(entry.r);
+      n = n.chooseSubtree(entry.getRect());
     }
     return n;
   },
@@ -305,13 +320,13 @@ var RTree = Class.create({
     var parentNode = parentEntry.node;
     if (newNode) {
       var newNodeMbr = Rectangle.mbr(newNode.getRectangles());
-      var newEntry = new Entry(newNodeMbr, newNode);
+      var newEntry = new Entry(newNode, newNodeMbr);
       if (parentNode.getEntryCount() < this.M) {
         parentNode.addEntry(newEntry);
-        this._adjustTree(parentNode);
+        return this._adjustTree(parentNode);
       } else {
         var parents = this._splitNode(parentNode, newEntry);
-        this._adjustTree(parents[0], parents[1]);
+        return this._adjustTree(parents[0], parents[1]);
       }
     }
   }

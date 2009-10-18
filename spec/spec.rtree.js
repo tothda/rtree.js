@@ -151,17 +151,49 @@ describe 'Node'
 end
 
 describe 'RTree'
-  it 'should create successfully'
-    r = new RTree();
-  end
+  describe 'insert - search'
 
-  describe 'insertion'
     before_each
-      r = new RTree()
+      tree = new RTree()
+      a = new Rectangle(0,0,2,2)
+      b = new Rectangle(4,0,5,4)
+      c = new Rectangle(1,3,3,6)
+      d = new Rectangle(4,2,7,5)
+      e = new Rectangle(4,6,5,7)
+      f = new Rectangle(8,0,10,1)
+      tree.insert('A', a)
+      tree.insert('B', b)
+      tree.insert('C', c)
+      tree.insert('D', d)
+      tree.insert('E', e)
+      tree.insert('F', f)
     end
 
-    it 'should insert a new entry without error'
-      r.insert(1, new Rectangle(1,1,3,3))
+    it 'should found the only one inserted object'
+      t = new RTree()
+      r = new Rectangle(1,1,3,3)
+      t.insert(1, r)
+      t.search(new Rectangle(1,1,2,2)).size().should.be 1
+    end
+
+    it 'should found one overlaping object'
+      tree.search(new Rectangle(1,1,3,3)).should.include 'A'
+    end
+
+    it 'should found two overlaping rectangle'
+      var result = tree.search(new Rectangle(1,1,3,4))
+      result.should.include 'A'
+      result.should.include 'C'
+    end
+
+    it 'should found all of the test rectangles'
+      var result = tree.search(new Rectangle(0,0,10,10))
+      console.log(result)
+      result.size().should.be 6
+    end
+
+    it 'should return an empty array if there is no match'
+      tree.search(new Rectangle(0,2,4,3)).size().should.be_empty
     end
   end
 end
