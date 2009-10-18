@@ -62,10 +62,106 @@ describe 'Rectangle'
       Rectangle.intersect(a,b).should.be_false
     end
   end
+
+  describe 'bounding rectangle calculation'
+    it 'should be correct in case of non-overlaping rectangles'
+      a = new Rectangle(1,1,3,3)
+      b = new Rectangle(2,4,4,5)
+      c = new Rectangle(1,1,4,5)
+      Rectangle.mbr(a,b).equals(c).should.be_true
+    end
+
+    it 'should be correct in case of containing rectangles'
+      a = new Rectangle(1,1,4,4)
+      b = new Rectangle(2,2,3,3)
+      Rectangle.mbr(a,b).equals(a).should.be_true
+    end
+
+    it 'should be correct in case of overlapping rectangles'
+      a = new Rectangle(1,1,3,3)
+      b = new Rectangle(2,2,5,4)
+      c = new Rectangle(1,1,5,4)
+      Rectangle.mbr(a,b).equals(c).should.be_true
+    end
+
+    it 'should be correct for more than two arguments'
+      a = new Rectangle(1,1,3,3)
+      b = new Rectangle(2,2,5,4)
+      c = new Rectangle(2,5,6,6)
+      r = new Rectangle(1,1,6,6)
+      Rectangle.mbr(a,b,c).equals(r).should.be true      
+    end
+    
+    it 'should work if gets an array of rectangles'
+      a = new Rectangle(1,1,3,3)
+      b = new Rectangle(2,2,5,4)
+      c = new Rectangle(2,5,6,6)
+      r = new Rectangle(1,1,6,6)
+      Rectangle.mbr([a,b,c]).equals(r).should.be true      
+    end
+  end
   
   it 'should calculate width, height correctly'
     r = new Rectangle(1,1,4,3)
     r.width().should.be 3
     r.height().should.be 2
   end
+
+  it 'should test equality correctly'
+    a = new Rectangle(2,3,4,5)
+    b = new Rectangle(2,3,4,5)
+    c = new Rectangle(2,3,4,6)
+    a.equals(b).should.be_true
+    a.equals(c).should.be_false
+  end
+
+  it 'should calculate area correctly'
+    a = new Rectangle(1,1,4,3)
+    a.area().should.be 6
+  end
 end      
+
+describe 'Node'
+  describe 'chooseSubtree'
+    before_each
+      /*
+           11....
+           11....
+           ......
+           ....33
+           2.....
+      */
+      e1 = new Entry(1, new Rectangle(0,0,2,2))
+      e2 = new Entry(2, new Rectangle(0,4,1,5))
+      e3 = new Entry(3, new Rectangle(4,3,6,4))
+      n = new Node()
+      n.entries = [e1, e2, e3]
+    end
+
+    it 'should choose subTree correectly'
+      r = new Rectangle(3,4,4,5)
+      n.chooseSubtree(r).should.be 2
+    end
+
+    it 'should choose subtree correctly if rect is inside of an exsisting subtree'
+      r = new Rectangle(1,0,2,2)
+      n.chooseSubtree(r).should.be 1
+    end
+  end
+end
+
+describe 'RTree'
+  it 'should create successfully'
+    r = new RTree();
+  end
+
+  describe 'insertion'
+    before_each
+      r = new RTree()
+    end
+
+    it 'should insert a new entry without error'
+      r.insert(1, new Rectangle(1,1,3,3))
+    end
+  end
+end
