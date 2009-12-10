@@ -188,7 +188,6 @@ describe 'RTree'
 
     it 'should found all of the test rectangles'
       var result = tree.search(new Rectangle(0,0,10,10))
-      console.log(result)
       result.size().should.be 6
     end
 

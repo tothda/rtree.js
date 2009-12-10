@@ -135,7 +135,8 @@ var Entry = Class.create({
   },
   setRect: function(rect) { this.rect = rect; },
   getRect: function() { return this.rect; },
-  getObj: function() {return this.obj}
+  getObj: function() {return this.obj},
+  setObj: function(obj) {this.obj = obj; }
 });
 
 /**
@@ -317,6 +318,7 @@ var RTree = Class.create({
     }
     var parentEntry = node.parentEntry;
     parentEntry.setRect(Rectangle.mbr(node.getRectangles()));
+    parentEntry.setObj(node);
     var parentNode = parentEntry.node;
     if (newNode) {
       var newNodeMbr = Rectangle.mbr(newNode.getRectangles());
