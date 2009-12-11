@@ -1,8 +1,13 @@
 <html>
   <head>
     <title>R-Tree demo<title>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
+    <script src="vendor/prototype/prototype.js" type="text/javascript" charset="utf-8"></script>      
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>    
+    <script type="text/javascript" charset="utf-8">
+      jQuery.noConflict();      
+    </script>    
     <script src="app.js"></script>
+    <script src="rtree.js" type="text/javascript" charset="utf-8"></script>
     <style>
       html,body{
         margin:0;
@@ -16,7 +21,7 @@
       #config-panel{
         position: absolute;
         width: 200px;
-        height: 200px;
+        height: 360px;
         top: 20px;
         left: 640px;     
         border: 1px solid gray;
@@ -28,6 +33,10 @@
       #config-panel input{
         margin-bottom: 10px;
       }
+      
+      #coord-panel{
+        margin-top: 20px;
+      }
     </style>
   </head>
   <body>
@@ -35,11 +44,13 @@
       Canvas is not supported in this browser...
     </canvas>
     <div id="config-panel">
+      <h3>Click on the rectangles!</h3>
       <div>
         <label for="num-of-objects">Number of objects:</label>
         <input type="text" name="num-of-objects" id="num-of-objects" />
       </div>
-    	<button id="re-init">Re-Init</button>    	
+    	<button id="re-init">Re-Init</button>
+    	<div id="coord-panel"></div>
     </div>
   </body>
 </html>

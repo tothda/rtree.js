@@ -194,5 +194,9 @@ describe 'RTree'
     it 'should return an empty array if there is no match'
       tree.search(new Rectangle(0,2,4,3)).size().should.be_empty
     end
+    
+    it 'should found an object if the search rect is a point'
+      tree.search(new Rectangle(1,1,1,1)).should.include 'A'
+    end
   end
 end

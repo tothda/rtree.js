@@ -1,12 +1,14 @@
-$(document).ready(function(){
+jQuery(document).ready(function(){
   app.run();
 });
 
 var app = (function() {
   var N = 20; // number of elements
+  var shapes; // array of the rectangles
   var w, h; // width and height of the canvas
   var canvas;
   var ctx2D;
+  var rTree;
 
   // generate a random integer
   var random = function(low, up) {
@@ -37,26 +39,34 @@ var app = (function() {
     return shapes;
   };
   
-  var drawShapes = function(ctx,w,h){
-    var shapes = generateShapes(w,h);
-    $.each(shapes, function(idx, shape) {
+  var addToTree = function(shapes){
+    for (var i = 0, l = shapes.length; i < l; i++){
+      var s = shapes[i];
+      rTree.insert(s, new Rectangle(s.x, s.y, s.x + s.w, s.y + s.h));
+    }
+  }
+  
+  var drawShapes = function(ctx,w,h){    
+    jQuery.each(shapes, function(idx, shape) {
       drawShape(ctx, shape);
     });
   };
 
   var drawShape = function(ctx, shape) {
-    console.log(shape);
     ctx.fillStyle = "rgba(_, _, _, 0.9)".replace(/_/g, shape.color);
     ctx.fillRect(shape.x, shape.y, shape.w, shape.h);
     return this;
   };
 
   var init = function() {
-  	canvas = $("#canvas").get(0);
+  	canvas = jQuery("#canvas").get(0);
     ctx2D = canvas.getContext("2d");
+    rTree = new RTree();
     w = canvas.width;
     h = canvas.height;
     clearCanvas(ctx2D,w,h);
+    shapes = generateShapes(w,h);
+    addToTree(shapes);
     drawShapes(ctx2D,w,h);
     initEventHandlers();
   };
@@ -69,15 +79,33 @@ var app = (function() {
   
   var initEventHandlers = function(){
     var adjustParams = function(){
-      N = parseInt($("#num-of-objects").val()) || N;      
+      N = parseInt(jQuery("#num-of-objects").val()) || N;      
     };
     
-    $('#re-init').click(function(){
+    jQuery('#re-init').click(function(){
       adjustParams();
-      clearCanvas(ctx2D,w,h);
-      drawShapes(ctx2D,w,h);
+      init();
+    });
+    
+    jQuery("#canvas").click(function (e) {
+      var c = coords(e);
+      var r = rTree.search(new Rectangle(c.x, c.y, c.x, c.y));  
+      jQuery("#coord-panel")
+        .html('')
+        .append('coordinates: [' + c.x + ',' + c.y + ']').append('<br/>')
+        .append('search results:').append('<br/>')
+        .append(jQuery.map(r, function(e, i){
+          return (i + 1) + '. x:' + e.x + ', y:' + e.y + ', w:' + e.w + ', h: ' + e.h;
+        }).join('<br/>'));
     });
   };
+  
+  var coords = function(e){
+    return {
+      x: e.pageX - 20,
+      y: e.pageY - 20
+    };
+  }
 
   return {
     run: function() {    	

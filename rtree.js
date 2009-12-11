@@ -324,12 +324,12 @@ var RTree = Class.create({
       var newNodeMbr = Rectangle.mbr(newNode.getRectangles());
       var newEntry = new Entry(newNode, newNodeMbr);
       if (parentNode.getEntryCount() < this.M) {
-        parentNode.addEntry(newEntry);
-        return this._adjustTree(parentNode);
+        parentNode.addEntry(newEntry);        
       } else {
         var parents = this._splitNode(parentNode, newEntry);
         return this._adjustTree(parents[0], parents[1]);
       }
     }
+    return this._adjustTree(parentNode);
   }
 });
